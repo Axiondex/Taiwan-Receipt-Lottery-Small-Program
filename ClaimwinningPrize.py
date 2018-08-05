@@ -81,10 +81,11 @@ class Prize:
             self.numberCheck(typein,winningnumbers)
     def RefreshData(self):
         if(not os.path.isfile("recipthtml.txt")):
-            WriteDataInToText()
+            self.WriteDataInToText()
         else:
              typein = input("Do you want to reload the Data from website? (Y/N)")
              if(typein in "Yy" ):
+                 self.
                  WriteDataInToText()
 recipt = Prize()
 recipt.RefreshData()
