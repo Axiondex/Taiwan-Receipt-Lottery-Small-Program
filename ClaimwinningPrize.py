@@ -2,17 +2,17 @@ from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 import re, sys, urllib
 import htmlparse
+import os
 #FileSave() call GrabWebSrc()
 #RunNumber() call SplitNumb() call RegexFiliter()
 class Prize:
     #def __init__(self):
     def WriteDataInToText(self):
-        with open("recipthtml.txt","w+") as reciptHtml: #Save html information from GrabWebSrc()
+        with open("recipthtml.txt","wb+") as reciptHtml: #Save html information from GrabWebSrc()
             #call GrabWebSrc function
             reciptHtml.write(self.grabWebSrc())
             if reciptHtml.closed == False:
                 reciptHtml.close()
-
     def grabWebSrc(self):
         req = Request('http://invoice.etax.nat.gov.tw/')
         #grab website information
@@ -25,6 +25,7 @@ class Prize:
         #print (page)
         #print response.info()
         return page
+    
     def openfile(self):
         with open("recipthtml.txt","r+", encoding="utf-8") as recipttext:
             content = recipttext.read()
@@ -73,19 +74,27 @@ class Prize:
     def EnterNumber(self,winningnumbers):
         while True:
             typein = input("Enter the Number")
-            if not typein.isdigit():
+            if not typein.isdigit() and typein != "":
                 typein = input("Please type again")
-            if typein == "":
+            else:
                 break
-            self.numberCheck(typein,winningnumbers)      
+            self.numberCheck(typein,winningnumbers)
+    def RefreshData(self):
+        if(not os.path.isfile("recipthtml.txt")):
+            WriteDataInToText()
+        else:
+             typein = input("Do you want to reload the Data from website? (Y/N)")
+             if(typein in "Yy" ):
+                 WriteDataInToText()
 recipt = Prize()
+recipt.RefreshData()
 parser = htmlparse.MyHTMLParser(recipt.openfile())
 parser.generateItem()
 parser.close()
-rewardtitle = ['特別獎', '特獎', '頭獎', '增開六獎']
+rewardTitle = ['特別獎', '特獎', '頭獎', '增開六獎']
 print(parser.titles[0])
 for index, num in enumerate(parser.numbers[:4]):
-    print(rewardtitle[index])
+    print(rewardTitle[index])
     print(num)
 recipt.EnterNumber(parser.numbers)
 #recipt.numberCheck("1340",parser.numbers)
